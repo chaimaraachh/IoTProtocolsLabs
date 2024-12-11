@@ -95,3 +95,47 @@ curl -sfL https://get.k3s.io | sh -
 
 ---
 
+# K3s Installation Verification
+
+## b. Installation Verification
+
+### Commands to verify the correct installation of the K3s server:
+These commands help verify whether K3s is installed and running properly.
+```bash
+sudo systemctl status k3s  # Check the status of the K3s service
+sudo kubectl get node      # List nodes in the K3s cluster
+sudo kubectl get nodes -o wide  # Detailed information about nodes
+```
+
+
+![4](https://github.com/user-attachments/assets/2bd083d8-f767-4c5d-b5be-2beb71e4c402)
+
+
+
+## c. Expected Results of Commands
+
+### Command: `sudo kubectl get node`
+This command shows the status of the K3s server node in the cluster. The expected result should indicate that the node is "Ready".
+Expected result:
+
+![5](https://github.com/user-attachments/assets/dc5c887e-55a9-4936-99e8-098315bd827b)
+
+
+### Command: `sudo kubectl get nodes -o wide`
+This command provides more detailed information about the K3s node, including IP addresses and operating system details.
+Expected result:
+
+![6](https://github.com/user-attachments/assets/a5933f4d-71b9-4ea9-8880-c453580e19ee)
+
+
+## d. Commands to restart the K3s server
+If the K3s service is not working correctly or you need to restart it, use these commands.
+```bash
+sudo systemctl restart k3s  # Restart the K3s service
+sudo systemctl status k3s  # Check the status of the K3s service after restart
+```
+
+
+
+![7](https://github.com/user-attachments/assets/acf1fd30-cc4c-4701-ae1f-336ebe62f280)
+---
