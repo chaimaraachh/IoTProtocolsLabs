@@ -139,3 +139,84 @@ sudo systemctl status k3s  # Check the status of the K3s service after restart
 
 ![7](https://github.com/user-attachments/assets/acf1fd30-cc4c-4701-ae1f-336ebe62f280)
 ---
+
+
+# K3s Multi-Node Installation Guide
+
+## 3. Installation of K3s with Multiple Agent Nodes
+
+### a. How to Retrieve the Token (K3S_TOKEN: Environment Variable for the Token) from the Server
+The token is required for agent nodes to join the K3s cluster. It can be retrieved from the server with the following command:
+
+```bash
+# On the K3s server, retrieve the token:
+cat /var/lib/rancher/k3s/server/node-token
+```
+
+![8](https://github.com/user-attachments/assets/4ef76d0e-0269-4d2c-b160-1dd0aeb170ce)
+
+### b. Commands to Configure a K3s Agent Node
+To configure a K3s agent node and join it to the cluster:
+
+```bash
+# Run the following command on the agent node:
+k3s agent --server https://<server-ip>:6443 --token <K3S_TOKEN>
+
+# Example:
+k3s agent --server https://192.168.58.135:6443 --token <retrieved-token>
+```
+![10](https://github.com/user-attachments/assets/79728e32-7b60-4e45-9647-3c5867f52090)
+
+
+### c. Commands to Copy the K3s Configuration File from the Server to the Agent Node
+The configuration file is located on the server at `/etc/rancher/k3s/k3s.yaml`. Use the `scp` command to copy it to the agent node:
+
+```bash
+# Copy the file from the server to the agent node:
+scp root@<server-ip>:/etc/rancher/k3s/k3s.yaml ~/k3s-agent-config.yaml
+
+# Example:
+scp root@192.168.58.135:/etc/rancher/k3s/k3s.yaml ~/k3s-agent-config.yaml
+```
+![13](https://github.com/user-attachments/assets/30300611-6c8c-4d02-94f9-1749523f9472)
+
+### d. Modifying the Configuration File to Contain the Server's IP Address
+After copying the file, update the server IP address in the configuration file:
+
+```bash
+# Replace the default IP `127.0.0.1` with the server's actual IP:
+sed -i 's/127.0.0.1/192.168.58.135/' ~/k3s-agent-config.yaml
+```
+![14](https://github.com/user-attachments/assets/0b7d69df-4bc9-4e06-8116-db3f141c04bf)
+
+
+### e. Role of the Command: `kubectl config view`
+This command is used to view the current Kubernetes configuration file (kubeconfig). It shows details about:
+- Clusters
+- Contexts
+- Users
+- Their associated credentials
+
+It helps verify or troubleshoot Kubernetes cluster configuration.
+![16](https://github.com/user-attachments/assets/684bc374-ba87-476a-a497-64cdb7746375)
+
+### f. Role of the Command: `kubectl get nodes -o wide`
+This command lists all the nodes in the Kubernetes cluster with additional information:
+- Internal IP
+- External IP
+- Operating system
+- Kernel version
+- Container runtime details
+
+It is useful for inspecting the cluster's node configurations.
+
+### g. Role of the Command: `kubectl get pods -A`
+This command displays all pods running across all namespaces. It provides:
+- Pod names
+- Status (e.g., Running, Pending, Failed)
+- Namespaces
+- Additional metadata
+
+It is commonly used for monitoring and troubleshooting cluster workloads.
+![17](https://github.com/user-attachments/assets/409599dc-dad9-4515-b39a-f8e11d64a507)
+
