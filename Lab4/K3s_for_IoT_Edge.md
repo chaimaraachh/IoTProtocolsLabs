@@ -283,5 +283,78 @@ Traefik is a Kubernetes-native ingress controller and proxy server. When deploye
 ![22](https://github.com/user-attachments/assets/dc63b7a9-476e-4f9d-b5eb-2638516cf31f)
 ![23](https://github.com/user-attachments/assets/d4925aee-ce8c-400a-bca0-ba59c7fb1869)
 
+----
+
+# Docker Installation and Python Application Deployment for Edge IoT
+
+## 5. Docker Installation
+
+### a. Docker Configuration Commands
+To install and configure Docker on your system, use the following commands:
+
+```bash
+# Update package information
+sudo apt update
+
+# Install prerequisite packages
+sudo apt install apt-transport-https ca-certificates curl software-properties-common
+
+# Add Docker's official GPG key
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+
+# Set up the stable repository for Docker
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+# Install Docker
+sudo apt update
+sudo apt install docker-ce docker-ce-cli containerd.io
+
+# Add the current user to the Docker group
+sudo usermod -aG docker $USER
+
+# Verify Docker installation
+docker --version
+```
+![29](https://github.com/user-attachments/assets/b497c482-8552-4670-8fcb-0ecd52bf201d)
+
+### b. Purpose of the Command `sudo docker run hello-world`
+This command verifies that Docker is installed and functioning correctly:
+- **Pulls the "hello-world" image**: If the image is not present locally, Docker downloads it from Docker Hub.
+- **Runs the image**: Executes the image in a container, displaying a confirmation message.
+- **Purpose**: Tests Docker installation and configuration.
+![30](https://github.com/user-attachments/assets/605f99bb-3e38-412c-8b66-41e7cbfcd06f)
+
+---
+
+## 6. Deploying a Python Application in Docker for Edge IoT
+
+### Configuration and Deployment Steps
+To deploy a Python-based IoT application in Docker, follow these steps:
+
+#### Step 1: Create a Python Application
+Create a simple Python application. For example, `iot_app.py`:
+
+![32](https://github.com/user-attachments/assets/99909a6e-0a60-498b-91cc-703bdccb61e3)
+
+
+#### Step 2: Write a Dockerfile
+Create a `Dockerfile` to containerize the application:
+
+![33](https://github.com/user-attachments/assets/a4f3afec-9218-4a38-b13e-09ad967d4496)
+
+
+#### Step 3: Build and Run the Docker Image
+```bash
+# Build the Docker image
+docker build -t iot-python-app .
+
+# Run the container
+docker run --name iot-app-container -d iot-python-app
+```
+![34](https://github.com/user-attachments/assets/21ddb3f1-f15d-4403-b024-d8fbfa18ff11)
+
+
+---
+
 
 
