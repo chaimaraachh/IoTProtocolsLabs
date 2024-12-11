@@ -219,4 +219,69 @@ This command displays all pods running across all namespaces. It provides:
 
 It is commonly used for monitoring and troubleshooting cluster workloads.
 ![17](https://github.com/user-attachments/assets/409599dc-dad9-4515-b39a-f8e11d64a507)
+----
+
+
+# Installation of Helm
+
+## a. What is the role of Helm?
+
+Helm is a package manager for Kubernetes, often referred to as the "Yum" or "Apt" for Kubernetes. It simplifies the deployment, upgrade, and management of applications on Kubernetes clusters by using predefined configuration templates called Helm Charts.
+
+### Key Roles of Helm:
+1. **Package Management**: Simplifies the distribution and deployment of Kubernetes applications.
+2. **Configuration Management**: Allows customization of applications using a set of configurable parameters.
+3. **Version Control**: Provides rollback capabilities to previous application states.
+4. **Dependency Management**: Manages application dependencies for seamless deployment.
+
+---
+
+## b. Commands for installing Helm
+
+To install Helm on a Raspberry Pi or any Linux-based system:
+
+1. Download the Helm binary:
+   ```bash
+   curl -fsSL https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+   ```
+
+
+
+2. Verify the installation:
+   ```bash
+   helm version
+   ```
+
+This will output the version of Helm installed, confirming successful installation.
+![19](https://github.com/user-attachments/assets/76617708-091a-4ba4-b835-c2926998a592)
+
+---
+
+## c. Purpose of the command: `helm list -n kube-system`
+
+This command lists all the Helm releases deployed in the `kube-system` namespace.
+
+### What it Verifies:
+- Displays the names of the deployed Helm charts.
+- Shows the status of each release (e.g., deployed, failed, pending).
+- Indicates the revision number, which reflects the number of updates or rollbacks performed.
+![20](https://github.com/user-attachments/assets/d39f3c03-e97f-4acd-87cd-7eea08e0515a)
+
+---
+
+
+## e. Explanation of the deployment of Traefik in the `kube-system` namespace
+
+Traefik is a Kubernetes-native ingress controller and proxy server. When deployed in the `kube-system` namespace, it serves as the default ingress controller in many K3s setups.
+
+### Significance:
+1. **Traffic Management**: Traefik routes external HTTP(S) traffic to internal services in the Kubernetes cluster.
+2. **Load Balancing**: Balances requests across multiple pods of a service.
+3. **TLS Termination**: Handles secure connections with SSL/TLS certificates.
+4. **Dynamic Configuration**: Automatically updates routes based on Kubernetes Ingress resources.
+![21](https://github.com/user-attachments/assets/29c50db0-428d-45e0-9906-85ddc40ea71d)
+![22](https://github.com/user-attachments/assets/dc63b7a9-476e-4f9d-b5eb-2638516cf31f)
+![23](https://github.com/user-attachments/assets/d4925aee-ce8c-400a-bca0-ba59c7fb1869)
+
+
 
