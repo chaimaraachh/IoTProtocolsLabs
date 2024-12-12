@@ -356,5 +356,315 @@ docker run --name iot-app-container -d iot-python-app
 
 ---
 
+# IoT Application Deployment Using Docker
+
+This document contains the steps for setting up and deploying IoT applications in Docker using Raspberry Pi.
+
+---
+
+## Step 1: Setting Up the Node.js Application
+
+1. Create a directory for your application.
+   ```bash
+   mkdir app-test
+   cd app-test
+   ```
+
+2. Create the Node.js application file (`app.js`) with the following content:
+   ```javascript
+   const http = require('http');
+
+   const server = http.createServer((req, res) => {
+       res.writeHead(200, { 'Content-Type': 'text/plain' });
+       res.end('Hello from app-test!');
+   });
+
+   server.listen(3000, () => {
+       console.log('Server running on port 3000');
+   });
+   ```
+
+3. Create a `Dockerfile` for the Node.js application:
+   ```Dockerfile
+   FROM node:16-slim
+
+   WORKDIR /app
+
+   COPY app.js /app/app.js
+
+   CMD ["node", "app.js"]
+   ```
+
+4. Build the Docker image:
+   ```bash
+   sudo docker build -t app-test .
+   ```
+
+---
+
+## Step 2: Setting Up the Python IoT Application
+
+1. Create a directory for your Python application.
+   ```bash
+   mkdir pythonapp
+   cd pythonapp
+   ```
+
+2. Create the Python application file (`iot_app.py`) with the following content:
+   ```python
+   # iot_app.py
+   import time
+   import random
+
+   def generate_temperature():
+       return round(random.uniform(20.0, 30.0), 2)
+
+   if __name__ == "__main__":
+       while True:
+           temperature = generate_temperature()
+           print(f"Current temperature: {temperature}°C")
+           time.sleep(2)
+   ```
+
+3. Create a `Dockerfile` for the Python application:
+   ```Dockerfile
+   # Dockerfile
+   FROM python:3.9-slim
+
+   WORKDIR /app
+
+   COPY iot_app.py /app/iot_app.py
+
+   CMD ["python", "iot_app.py"]
+   ```
+
+4. Build the Docker image:
+   ```bash
+   sudo docker build -t iot-app .
+   ```
+
+5. Run the Docker container:
+   ```bash
+   sudo docker run iot-app
+   ```
+
+---
+
+## Outputs
+
+- **Node.js Application Output**: "Hello from app-test!" when accessed on port 3000.
+- **Python Application Output**: Continuously generated random temperature values.
+
+---
+
+Ensure Docker is installed and configured properly on your Raspberry Pi for these steps to work effectively.
+
+---
+## Step 3: Deploying the Application on Kubernetes
+
+### Creating a Deployment File
+
+1. Create a deployment file `app-test-deployment.yaml` with the following content:
+   ```yaml
+   apiVersion: apps/v1
+   kind: Deployment
+   metadata:
+     name: app-test
+   spec:
+     replicas: 2
+     selector:
+       matchLabels:
+         app: app-test
+     template:
+       metadata:
+         labels:
+           app: app-test
+       spec:
+         containers:
+         - name: app-test-container
+           image: chaimaraach/app-test:latest
+           ports:
+           - containerPort: 3000
+   ```
+
+2. Apply the deployment file to Kubernetes:
+   ```bash
+   kubectl apply -f app-test-deployment.yaml
+   ```
+
+3. Verify the deployment:
+   ```bash
+   kubectl get deployments
+   kubectl get pods
+   ```
+
+4. Check the status of running pods:
+   ```bash
+   kubectl get pods -o wide
+   ```
+
+---
+
+## Step 4: Pushing the Docker Image to Docker Hub
+
+### Steps for Docker Hub Integration
+
+1. Tag the Docker image:
+   ```bash
+   sudo docker tag app-test chaimaraach/app-test:latest
+   ```
+
+2. Log in to Docker Hub:
+   ```bash
+   sudo docker login -u chaimaraach
+   ```
+
+3. Push the image to Docker Hub:
+   ```bash
+   sudo docker push chaimaraach/app-test:latest
+   ```
+
+4. Verify the image on Docker Hub by visiting the Docker Hub repository.
+
+---
+
+## Outputs
+
+- **Kubernetes Pods**: Pods running with the application as per the specified replicas.
+- **Docker Hub Repository**: Application image successfully uploaded to Docker Hub.
+
+---
+
+Ensure Kubernetes is configured properly, and the Docker daemon is running during these steps.
+
+## Step 5: Exposing Kubernetes Deployment as a Service
+
+### Steps to Expose and Verify the Service
+
+1. Expose the deployment using a NodePort service:
+   ```bash
+   kubectl expose deployment app-test --type=NodePort --port=3000
+   ```
+
+2. Verify the service:
+   ```bash
+   kubectl get service app-test
+   ```
+
+3. Describe the service to get details:
+   ```bash
+   kubectl describe service app-test
+   ```
+
+4. Access the application through the service using the `<Node_IP>:<NodePort>` (e.g., `http://192.168.175.131:30343`):
+   - **Using a Browser**: Visit the URL to confirm the application response.
+   - **Using cURL**: Run the command:
+     ```bash
+     curl http://192.168.175.131:30343
+     ```
+   - **Using PowerShell**: Use the same URL with `curl`.
+
+---
+
+## Outputs
+
+- **Service Description**: Detailed information about the Kubernetes service, including the NodePort.
+- **Application Response**: "Hello from app-test!" message served via the browser, `curl`, or PowerShell.
+
+---
+
+Ensure the Kubernetes cluster has the correct configuration and the service's NodePort is accessible from your network.
+## Step 6: Managing ReplicaSets and Updating Deployment
+
+### Describing and Managing ReplicaSets
+
+1. To describe the ReplicaSet associated with your deployment:
+   ```bash
+   kubectl describe replicaset -l app=app-test
+   ```
+
+2. Outputs include:
+   - **Pod Creation**: Shows the events where pods were created or deleted.
+   - **ReplicaSet Information**: Details like labels, selectors, and replica counts.
+
+### Updating Kubernetes Deployment
+
+1. Edit the deployment file `app-test-deployment.yaml` to include resource requests, limits, environment variables, and probes:
+   ```yaml
+   apiVersion: apps/v1
+   kind: Deployment
+   metadata:
+     name: app-test
+   spec:
+     replicas: 2
+     selector:
+       matchLabels:
+         app: app-test
+     template:
+       metadata:
+         labels:
+           app: app-test
+       spec:
+         containers:
+         - name: app-test-container
+           image: chaimaraach/app-test:latest
+           ports:
+           - containerPort: 3000
+           resources:
+             requests:
+               memory: "64Mi"
+               cpu: "250m"
+             limits:
+               memory: "128Mi"
+               cpu: "500m"
+           livenessProbe:
+             httpGet:
+               path: /
+               port: 3000
+             initialDelaySeconds: 3
+             periodSeconds: 5
+           readinessProbe:
+             httpGet:
+               path: /
+               port: 3000
+             initialDelaySeconds: 3
+             periodSeconds: 5
+           env:
+           - name: ENVIRONMENT
+             value: "production"
+           - name: APP_PORT
+             value: "3000"
+     affinity:
+       nodeAffinity:
+         requiredDuringSchedulingIgnoredDuringExecution:
+           nodeSelectorTerms:
+           - matchExpressions:
+             - key: kubernetes.io/hostname
+               operator: In
+               values:
+               - raspberry-agent
+   ```
+
+2. Apply the updated deployment file:
+   ```bash
+   kubectl apply -f app-test-deployment.yaml
+   ```
+
+3. Verify the updated deployment:
+   ```bash
+   kubectl describe deployment app-test
+   kubectl get pods
+   ```
+
+---
+
+## Outputs
+
+- **ReplicaSets**: Shows scaling events and pod creation/deletion associated with the ReplicaSet.
+- **Updated Deployment**: Reflects new configurations, such as resource limits and probes.
+
+---
+
+Ensure your Kubernetes cluster is properly configured to handle these updated resources and configurations.
 
 
