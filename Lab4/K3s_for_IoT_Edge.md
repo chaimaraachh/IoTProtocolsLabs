@@ -1,4 +1,4 @@
-# Lightweight Kubernetes K3s for IoT Edge (Raspberry)
+![53](https://github.com/user-attachments/assets/9525e6e8-7656-479e-ba1c-1c36dd293b67)# Lightweight Kubernetes K3s for IoT Edge (Raspberry)
 
 ## Overview
 
@@ -384,6 +384,8 @@ This document contains the steps for setting up and deploying IoT applications i
    });
    ```
 
+![35](https://github.com/user-attachments/assets/b4e6597d-3135-44c2-a813-21877caa5c4d)
+
 3. Create a `Dockerfile` for the Node.js application:
    ```Dockerfile
    FROM node:16-slim
@@ -395,6 +397,8 @@ This document contains the steps for setting up and deploying IoT applications i
    CMD ["node", "app.js"]
    ```
 
+![36](https://github.com/user-attachments/assets/ceb8b3cb-448a-4cac-9558-ff9e700a09e2)
+
 4. Build the Docker image:
    ```bash
    sudo docker build -t app-test .
@@ -402,65 +406,22 @@ This document contains the steps for setting up and deploying IoT applications i
 
 ---
 
-## Step 2: Setting Up the Python IoT Application
+![37](https://github.com/user-attachments/assets/7efcbe4b-8869-492f-b5f7-236b8275dcd0)
 
-1. Create a directory for your Python application.
-   ```bash
-   mkdir pythonapp
-   cd pythonapp
-   ```
+![39](https://github.com/user-attachments/assets/9f8befa2-d57b-4a2e-be95-10a666bcfe14)
 
-2. Create the Python application file (`iot_app.py`) with the following content:
-   ```python
-   # iot_app.py
-   import time
-   import random
-
-   def generate_temperature():
-       return round(random.uniform(20.0, 30.0), 2)
-
-   if __name__ == "__main__":
-       while True:
-           temperature = generate_temperature()
-           print(f"Current temperature: {temperature}°C")
-           time.sleep(2)
-   ```
-
-3. Create a `Dockerfile` for the Python application:
-   ```Dockerfile
-   # Dockerfile
-   FROM python:3.9-slim
-
-   WORKDIR /app
-
-   COPY iot_app.py /app/iot_app.py
-
-   CMD ["python", "iot_app.py"]
-   ```
-
-4. Build the Docker image:
-   ```bash
-   sudo docker build -t iot-app .
-   ```
-
-5. Run the Docker container:
-   ```bash
-   sudo docker run iot-app
-   ```
+![40](https://github.com/user-attachments/assets/d7b87736-cd55-446b-a3e3-3f7557702c19)
 
 ---
 
 ## Outputs
 
 - **Node.js Application Output**: "Hello from app-test!" when accessed on port 3000.
-- **Python Application Output**: Continuously generated random temperature values.
 
 ---
 
-Ensure Docker is installed and configured properly on your Raspberry Pi for these steps to work effectively.
-
 ---
-## Step 3: Deploying the Application on Kubernetes
+## Step 2: Deploying the Application on Kubernetes
 
 ### Creating a Deployment File
 
@@ -487,16 +448,24 @@ Ensure Docker is installed and configured properly on your Raspberry Pi for thes
            - containerPort: 3000
    ```
 
+![41](https://github.com/user-attachments/assets/b40ca3bf-ce21-4bda-9d37-2d462c1700b1)
+
 2. Apply the deployment file to Kubernetes:
    ```bash
    kubectl apply -f app-test-deployment.yaml
    ```
+
+![42](https://github.com/user-attachments/assets/e714f1e7-6301-4f43-a7f9-6af03a096319)
 
 3. Verify the deployment:
    ```bash
    kubectl get deployments
    kubectl get pods
    ```
+
+![43](https://github.com/user-attachments/assets/58eac67a-80b9-4015-ae4f-0de6292ee21f)
+
+![44](https://github.com/user-attachments/assets/64ae63d0-b26b-46ac-bc61-53dc1bd0da2a)
 
 4. Check the status of running pods:
    ```bash
@@ -505,39 +474,7 @@ Ensure Docker is installed and configured properly on your Raspberry Pi for thes
 
 ---
 
-## Step 4: Pushing the Docker Image to Docker Hub
-
-### Steps for Docker Hub Integration
-
-1. Tag the Docker image:
-   ```bash
-   sudo docker tag app-test chaimaraach/app-test:latest
-   ```
-
-2. Log in to Docker Hub:
-   ```bash
-   sudo docker login -u chaimaraach
-   ```
-
-3. Push the image to Docker Hub:
-   ```bash
-   sudo docker push chaimaraach/app-test:latest
-   ```
-
-4. Verify the image on Docker Hub by visiting the Docker Hub repository.
-
----
-
-## Outputs
-
-- **Kubernetes Pods**: Pods running with the application as per the specified replicas.
-- **Docker Hub Repository**: Application image successfully uploaded to Docker Hub.
-
----
-
-Ensure Kubernetes is configured properly, and the Docker daemon is running during these steps.
-
-## Step 5: Exposing Kubernetes Deployment as a Service
+## Step 3: Exposing Kubernetes Deployment as a Service
 
 ### Steps to Expose and Verify the Service
 
@@ -545,6 +482,8 @@ Ensure Kubernetes is configured properly, and the Docker daemon is running durin
    ```bash
    kubectl expose deployment app-test --type=NodePort --port=3000
    ```
+
+![45](https://github.com/user-attachments/assets/fc8e22a9-140c-4e37-a9e1-215515cf7fb4)
 
 2. Verify the service:
    ```bash
@@ -564,6 +503,13 @@ Ensure Kubernetes is configured properly, and the Docker daemon is running durin
      ```
    - **Using PowerShell**: Use the same URL with `curl`.
 
+![46](https://github.com/user-attachments/assets/32b6037b-ec7b-4067-9911-977c50af13f1)
+
+![47](https://github.com/user-attachments/assets/413e23ed-bc18-45cc-b285-1f9733ff6ef3)
+
+![48](https://github.com/user-attachments/assets/ef106add-11b6-4c0d-8428-f3c389132683)
+
+
 ---
 
 ## Outputs
@@ -574,7 +520,7 @@ Ensure Kubernetes is configured properly, and the Docker daemon is running durin
 ---
 
 Ensure the Kubernetes cluster has the correct configuration and the service's NodePort is accessible from your network.
-## Step 6: Managing ReplicaSets and Updating Deployment
+## Step 4: Managing ReplicaSets and Updating Deployment
 
 ### Describing and Managing ReplicaSets
 
@@ -582,6 +528,8 @@ Ensure the Kubernetes cluster has the correct configuration and the service's No
    ```bash
    kubectl describe replicaset -l app=app-test
    ```
+
+![49](https://github.com/user-attachments/assets/30b2e60b-d55f-4b7a-bec7-50357b24e85c)
 
 2. Outputs include:
    - **Pod Creation**: Shows the events where pods were created or deleted.
@@ -650,6 +598,8 @@ Ensure the Kubernetes cluster has the correct configuration and the service's No
    kubectl apply -f app-test-deployment.yaml
    ```
 
+![52](https://github.com/user-attachments/assets/2620286a-2944-4656-b53e-8bb9d8d1c0fc)
+
 3. Verify the updated deployment:
    ```bash
    kubectl describe deployment app-test
@@ -658,13 +608,15 @@ Ensure the Kubernetes cluster has the correct configuration and the service's No
 
 ---
 
+![53](https://github.com/user-attachments/assets/bf46b6a8-5835-46b7-86a3-581b9ee45ccc)
+
+![54](https://github.com/user-attachments/assets/17e0c1ff-9409-4e50-9ea9-d79ab2ee1324)
+
 ## Outputs
 
 - **ReplicaSets**: Shows scaling events and pod creation/deletion associated with the ReplicaSet.
 - **Updated Deployment**: Reflects new configurations, such as resource limits and probes.
 
 ---
-
-Ensure your Kubernetes cluster is properly configured to handle these updated resources and configurations.
 
 
